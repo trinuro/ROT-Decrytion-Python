@@ -1,50 +1,55 @@
-##########################################################################################
-# This script is used to print out all posibble ROT combinations
-# Problem: I needed a way to determine whether it was a ROT encryption or not
-# Tought process: Initially, I wanted to make it able to detect what ROT number it is
-# automatically but it was too difficult. Instead, I just created a script to print
-# out all possible ROT combinations. The user will then use logic to choose
-# a possible ROT number
-##########################################################################################
-import string
+'''
+   .----.
+   |C>_ |
+ __|____|__
+|  ______--|
+`-/.::::.\-'a
+ `--------'
 
-charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-#standard character set
+This is a simple project I did on 26/5/2023. I realised the previous version did not work.
+This code shows a ROT encryption algorithm. 
+Letters will be shifted to the right by a certain amount, called the 'rotation number'
+Uppercase and lowercase letters will remain upper- or lower-case
+Numbers are unaffected.
 
-user_input = ""
-ROT = 13 #Default
+ASCII ART from https://www.asciiart.eu/computers/computers
+'''
 
-def determine_position(i):
-    output = []
-    for i in encryptedData:
-        position = charSet.find(i)
-        output.append(position)
-    return(output)
-#map position of all characters in string to charSet
+UPPER_CHAR_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+LOWER_CHAR_SET = "abcdefghijklmnopqrstuvwxyz"
+DEFAULT_ROT = 13
 
-def get_real_pos(i):
-    actual_position_array = []
-    for element in i:
-        if element == -1:
-            actual_position_array.append(element)
-        else:
-            actual_position_array.append((element+ ROT)%26)
-    return(actual_position_array)
-#add ROT number to each element in position_array
+def rotate(position: int, rotation: int)-> int:
+    new_position = position + rotation
+    if new_position>25:
+        new_position-= 26
+    return new_position
+# Increases the index of the character. If the index is more than 25, start again from 0.
 
-def remap(input_array):
-    output =[]
-    iteration = 0
-    for i in input_array:
-        if i != -1:
-            output.append(charSet[i])
-        else:
-            output.append(encryptedData[iteration])
-        if user_input[iteration].islower():
-            output[iteration] = output[iteration].lower()
-        iteration += 1
-    return(output)
-#map back the elements in array to charSet
+def encrypt_char(character: str, rotation_number: int) -> str:
+    if character.isalpha():
+        if character.isupper():
+            index = UPPER_CHAR_SET.find(character)
+            new_index = rotate(index, rotation_number)
+            new_character = UPPER_CHAR_SET[new_index]
+        if character.islower():
+            index = LOWER_CHAR_SET.find(character)
+            new_index = rotate(index, rotation_number)
+            new_character = LOWER_CHAR_SET[new_index]
+
+    else:
+        new_character = character
+        index = "NO INDEX"
+
+    return new_character
+# Encrypts a Character. If it is an integer, no encryption is applied
+
+def encrypt(input_string: str, rot_number: int = DEFAULT_ROT)-> str:
+    encrypted_text = list()
+    for i in input_string:
+        encrypted_text.append(encrypt_char(i, rot_number))
+    return listToString(encrypted_text)
+# Encrypts the whole string
 
 def listToString(s):
     # initialize an empty string
@@ -55,37 +60,11 @@ def listToString(s):
     # return string
     return str1
 
-def decrypt(i):
-    main_output = []
-    position_array = determine_position(i)
-    actual_position_array = get_real_pos(position_array)
-    half_ready_output = remap(actual_position_array)
-    return(listToString(half_ready_output))
-#main decrypt function
+#def decrypt_char()
 
 
-#main
-while True:
-    print("What is your encrypted data?")
-    user_input = input()
-    encryptedData = user_input.upper()
-    print("What is your ROT number?(0-25) \nSpecial number: all")
-    x = input()
-    
-    if x == "all":
-        for i in range(26):
-            ROT = i
-            print('ROT ['+str(ROT)+']'+' '+decrypt(encryptedData))
-    elif not isinstance(x, str):
-        if int(x) in range(0,26):
-            ROT = int(x)
-            print('ROT ['+str(ROT)+']'+' '+decrypt(encryptedData))
-    else:
-        print("Please enter a valid number")
-
-    print("\nContinue?(Y/N)")
-    y = input().upper()
-    if y == 'Y':
-        continue
-    else:
-        break
+#while True:
+#    i = input("Input: ")
+#    desired_rot = int(input("ROT: "))
+#    print(encrypt(i, desired_rot))
+# Just code for debugging
